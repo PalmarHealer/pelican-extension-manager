@@ -1,3 +1,4 @@
+
 # Extension Manager for Pelican Panel
 
 This repository provides a modified version of specific files from the Pelican Panel (version 1.0.0-beta19) to add an Extension Manager feature.
@@ -22,6 +23,23 @@ This project is in an early phase. Features are limited and subject to change. N
 | 1.0.0-beta19            | ✅ Supported  | Base version for this patch   |
 | 1.0.0-beta18 and below  | ❌ Unsupported | Not tested / likely incompatible |
 | Future versions         | ❓ Unknown    | Will require adjustments      |
+
+
+## Features
+
+| Feature                       | Status        | Notes                                                                                      |
+|-------------------------------|---------------|--------------------------------------------------------------------------------------------|
+| Server extension support      | ✅            | Offers full feature parity with regular server tabs (including subuser permission control) |
+| Admin panel extension support | ❌            | Planned                                                                                    |
+| Hook-based extension support  | ❌            | Planned                                                                                    |
+|Egg-specific extensions        | ✅            | Can be toggled in the “Extensions” tab                                                     |
+
+### Additional Highlights
+
+-   **Simple Installation**: Just provide the GitHub repository URL—no manual setup required, after installation of the manager.
+    
+-   **Toggle Support**: All extensions can be enabled or disabled in the admin panel.
+    
 
 
 ## Extensions
