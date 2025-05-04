@@ -1,4 +1,6 @@
 <x-filament-panels::page>
+
+
 <div class="ml-auto">
     <x-filament::modal
             wire:model="showInstallExtensionModal"
@@ -14,7 +16,7 @@
                     icon="tabler-download"
                     class="mr-2"
             >
-                Install new Extension
+                Install new extension
             </x-filament::button>
         </x-slot>
         @if(isset($this->search['github']))
@@ -145,6 +147,7 @@
                                     color="info"
                                     icon="tabler-brand-github"
                                     class="mr-2"
+                                    target="_blank"
                                     href="{{ $this->search['source_url'] }}"
                                     tag="a"
                             >
@@ -155,6 +158,7 @@
                             <x-filament::button
                                     color="success"
                                     icon="tabler-cash"
+                                    target="_blank"
                                     href="{{ $this->search['donation_url'] }}"
                                     tag="a"
                             >
@@ -350,6 +354,7 @@
                             color="info"
                             icon="tabler-brand-github"
                             class="mr-2"
+                            target="_blank"
                             href="{{ $extension['source_url'] }}"
                             tag="a"
                     >
@@ -360,6 +365,7 @@
                     <x-filament::button
                             color="success"
                             icon="tabler-cash"
+                            target="_blank"
                             href="{{ $extension['donation_url'] }}"
                             tag="a"
                     >
