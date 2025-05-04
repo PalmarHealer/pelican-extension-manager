@@ -1,6 +1,8 @@
 <?php
 namespace Extensions\helper;
 
+use Illuminate\Support\Facades\File;
+
 class extensionHelper
 {
     public static function getInstalledExtensions(): array
@@ -25,12 +27,20 @@ class extensionHelper
         return $return;
     }
 
-    public function getPermissionTabs($tabs = null): array
+    public function getPermissionTabs(int $limitExtensionsToEggID = null, $tabs = null): array
     {
         $return = [];
         if (is_array($tabs)) $return = $tabs;
         foreach (self::getInstalledExtensions() as $extension) {
-            if (!$extension['deployed']) continue;
+            if (!$extension['deployed']) {
+                continue;
+            }
+            if (!($extension['egg_settings']['enabled_for_all'] ?? false)) {
+                if (!in_array($limitExtensionsToEggID, $extension['egg_settings']['allowed_egg_ids'] ?? [])) {
+                    continue;
+                }
+            }
+
             foreach ($extension['permission'] as $permission) {
                 $return = $this->insertFromEnd($return, $permission['position'], [
                     'name' => $permission['name'],
@@ -57,4 +67,44 @@ class extensionHelper
         array_splice($array, $position, 0, [$value]);
         return $array;
     }
+
+    public static function checkExtensionEgg(string $extensionSlug, int $eggID): bool
+    {
+        $extensions = glob(base_path("extensions/extensionManifests/"). '*.json');
+
+        foreach ($extensions as $extension) {
+            $data = json_decode(File::get($extension), true);
+
+            if (!is_array($data) || ($data['slug'] ?? null) !== $extensionSlug) {
+                continue;
+            }
+
+
+            if (!isset($data['egg_settings'])) {
+                $eggSettings = [
+                    'enabled_for_all' => true,
+                    'allowed_egg_ids' => []
+                ];
+
+                $newData = array_merge($data, ['egg_settings' => $eggSettings]);
+
+                File::put($extension, json_encode($newData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+                return true;
+            }
+
+            $settings = $data['egg_settings'];
+
+            if (($settings['enabled_for_all'] ?? false)) {
+                return true;
+            }
+
+            if (in_array($eggID, $settings['allowed_egg_ids'] ?? [])) {
+                return true;
+            }
+
+            return false;
+        }
+        return false;
+    }
+
 }

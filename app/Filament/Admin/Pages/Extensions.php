@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Pages;
 
 require_once base_path() .'/extensions/helper/extensionHelper.php';
 
+use App\Models\Egg;
 use Exception;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -15,24 +16,46 @@ class Extensions extends Page
 {
 
     public $query;
+    public $eggFilter;
 
-    protected static ?string $navigationIcon = 'heroicon-o-beaker';
+    protected static ?string $navigationIcon = 'tabler-puzzle';
 
-    protected static ?string $navigationGroup = 'Extensions';
-
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 0;
 
     protected static string $view = 'filament.admin.pages.extensions';
 
-    public string $activeTab = "installed";
+    public string $test = "";
     public array $search = ['github' => false, 'zip' => false];
 
     public array $installed = [];
+    public array $panelEggs = [];
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->can('access extensions');
+    }
+
 
     public function mount()
     {
+        $this->panelEggs = array_map(function ($item) {
+            return [
+                'id' => $item['id'],
+                'name' => $item['name']
+            ];
+        }, Egg::all()->toArray());
 
-        $this->installed = extensionHelper::getInstalledExtensions();
+        $this->reload();
+    }
+
+    private function reload(): void
+    {
+        $this->installed = [];
+        foreach (extensionHelper::getInstalledExtensions() as $extension) {
+            $extension['eggs'] = $this->panelEggs;
+            $this->installed[] = $extension;
+
+        }
     }
 
     public function submit(): void
@@ -66,6 +89,26 @@ class Extensions extends Page
             $this->search = $data;
         }
     }
+
+    public function filterEggs($extensionSlug): void
+    {
+        $this->installed = [];
+
+        foreach (extensionHelper::getInstalledExtensions() as $extension) {
+            $filteredEggs = $this->panelEggs;
+            if ($extensionSlug == $extension['slug']) {
+                $filteredEggs = collect($this->panelEggs)
+                    ->filter(function ($item) {
+                        return stripos($item['name'], $this->eggFilter) !== false;
+                    })
+                    ->values();
+            }
+            $extension['eggs'] = $filteredEggs->toArray();
+            $this->installed[] = $extension;
+
+        }
+    }
+
     public function enableExtension($extension): void
     {
         foreach ($this->installed as $installedExtension) {
@@ -88,7 +131,8 @@ class Extensions extends Page
             }
             $this->toggleExtensionState($installedExtension['filename'], true);
         }
-        $this->installed = extensionHelper::getInstalledExtensions();
+
+        $this->reload();
     }
 
     public function disableExtension($extension): void
@@ -122,7 +166,7 @@ class Extensions extends Page
                 }
                 $this->toggleExtensionState($installedExtension['filename'], false);
 
-                $this->installed = extensionHelper::getInstalledExtensions();
+                $this->reload();
                 return;
             } catch (Exception $e) {
                 Notification::make()
@@ -137,7 +181,8 @@ class Extensions extends Page
             ->title("Error")
             ->body("Extension not found.")
             ->send();
-        $this->installed = extensionHelper::getInstalledExtensions();
+
+        $this->reload();
     }
 
     public function downloadExtension(): void
@@ -146,7 +191,7 @@ class Extensions extends Page
         $file = $this->getDownloadRepoOrZipUrl($this->query);
         $return = $this->downloadZipFromUrl($file['url'], $file['filename'], base_path("extensions/extensionArchives"));
         if ($return['successful']) {
-            $return['message'] = $this->extractFileFromZip(base_path("extensions/extensionArchives") . "/" . $file['filename'], "manifest.json", base_path("extensions/extensionManifests"));
+            $this->extractFileFromZip(base_path("extensions/extensionArchives") . "/" . $file['filename'], "manifest.json", base_path("extensions/extensionManifests"));
         }
         if (!$this->toggleExtensionState(pathinfo(basename($file['filename']), PATHINFO_FILENAME), false)) {
             $this->removeExtension(pathinfo(basename($file['filename']), PATHINFO_FILENAME), true);
@@ -157,7 +202,7 @@ class Extensions extends Page
             return;
         }
 
-        $this->installed = extensionHelper::getInstalledExtensions();
+        $this->reload();
     }
 
     public function removeExtension($extension, $directFileName = false): void
@@ -187,7 +232,7 @@ class Extensions extends Page
                     $return = "Failed to delete file: $fileNameZip";
                 }
 
-                $this->installed = extensionHelper::getInstalledExtensions();
+                $this->reload();
                 return;
             } catch (Exception $e) {
                 Notification::make()
@@ -253,7 +298,7 @@ class Extensions extends Page
         return $return;
     }
 
-    private function extractFileFromZip($zipFilePath, $fileName, $destinationDir, $retainFileName = false): string
+    private function extractFileFromZip($zipFilePath, $fileName, $destinationDir, $retainFileName = false): void
     {
         $zip = new ZipArchive();
 
@@ -267,7 +312,7 @@ class Extensions extends Page
                     $stream = $zip->getStream($entry);
                     if (!$stream) {
                         $zip->close();
-                        return "Error while reading file from extension.";
+                        return;
                     }
 
                     if (!is_dir($destinationDir)) {
@@ -292,14 +337,12 @@ class Extensions extends Page
                     fclose($output);
 
                     $zip->close();
-                    return "Extension successfully installed";
+                    return;
                 }
             }
             $zip->close();
-            return "File " . $fileName . " not found in extensions.";
 
         } else {
-            return "Error opening extension.";
         }
     }
 
@@ -382,5 +425,54 @@ class Extensions extends Page
 
         File::put($path, json_encode($newData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         return true;
+    }
+
+    public function setPerEggControl(string $extensionSlug, bool $enabledForAll): void
+    {
+        $extensions = glob(base_path("extensions/extensionManifests/") . '*.json');
+
+        foreach ($extensions as $extension) {
+            $data = json_decode(File::get($extension), true);
+
+            if (!is_array($data) || ($data['slug'] ?? null) !== $extensionSlug) {
+                continue;
+            }
+
+            $data['egg_settings'] = [
+                'enabled_for_all' => $enabledForAll,
+                'allowed_egg_ids' => ($data['egg_settings']['allowed_egg_ids'] ?? [])
+            ];
+
+            File::put($extension, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        }
+        $this->reload();
+    }
+
+    public function setEggForPermission(string $extensionSlug, int $EggId, bool $add): void
+    {
+        $extensions = glob(base_path("extensions/extensionManifests/") . '*.json');
+
+        foreach ($extensions as $extension) {
+            $data = json_decode(File::get($extension), true);
+
+            if (!is_array($data) || ($data['slug'] ?? null) !== $extensionSlug) {
+                continue;
+            }
+
+            $newEggIDs = $data['egg_settings']['allowed_egg_ids'];
+            if ($add) {
+                $newEggIDs[] = $EggId;
+            } else {
+                unset($newEggIDs[array_search($EggId, $newEggIDs)]);
+            }
+
+            $data['egg_settings'] = [
+                'enabled_for_all' => $data['egg_settings']['enabled_for_all'],
+                'allowed_egg_ids' => array_values($newEggIDs)
+            ];
+
+            File::put($extension, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        }
+        $this->reload();
     }
 }
