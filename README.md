@@ -5,7 +5,6 @@ This repository provides a modified version of specific files from the Pelican P
 ⚠️ **Early Development Stage**  
 This project is in an early phase. Features are limited and subject to change. New functionality will be added over time.
 
----
 
 ## Compatibility
 
@@ -15,8 +14,14 @@ This project is in an early phase. Features are limited and subject to change. N
 | 1.0.0-beta18 and below  | ❌ Unsupported | Not tested / likely incompatible |
 | Future versions         | ❓ Unknown    | Will require adjustments      |
 
----
 
+## Extensions
+
+You can test the extension system using the following demo extension:
+
+🔗 [pelican-test-extension](https://github.com/PalmarHealer/pelican-test-extension)
+
+This example is designed to demonstrate basic loading functionality and serves as a template for future extensions.
 
 
 ## Installation
@@ -63,19 +68,7 @@ Depending on your OS and web server:
     sudo chown -R apache:apache /var/www/pelican
     
     ```
-    
 
-----------
-
-## Extensions
-
-You can test the extension system using the following demo extension:
-
-🔗 [pelican-test-extension](https://github.com/PalmarHealer/pelican-test-extension)
-
-This example is designed to demonstrate basic loading functionality and serves as a template for future extensions.
-
-----------
 
 ## Notes
 
