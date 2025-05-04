@@ -85,7 +85,7 @@ class UserResource extends Resource
 
         $tabs = [];
         $permissionsArray = [];
-        foreach (Permission::permissionTabs() as $tab) {
+        foreach (Permission::permissionTabs($server->egg['id']) as $tab) {
             $options = [];
             $descriptions = [];
             foreach ($tab['checkboxList']['options'] as $option) {
@@ -120,7 +120,6 @@ class UserResource extends Resource
                                     })
                                     ->bulkToggleable()
                                     ->label('')
-                                    // Extra () ensure correct precedence for null coalescing with array access
                                     ->columns(($tab['checkboxList']['columns'] ?? 2))
                                     ->options($options)
                                     ->descriptions($descriptions),
@@ -138,7 +137,6 @@ class UserResource extends Resource
                             CheckboxList::make($tab['checkboxList']['name'])
                                 ->bulkToggleable()
                                 ->label('')
-                                // Extra () ensure correct precedence for null coalescing with array access
                                 ->columns(($tab['checkboxList']['columns'] ?? 2))
                                 ->options($options)
                                 ->descriptions($descriptions),

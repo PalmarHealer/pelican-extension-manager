@@ -34,7 +34,7 @@ class ListUsers extends ListRecords
 
         $tabs = [];
         $permissionsArray = [];
-        foreach (Permission::permissionTabs() as $tab) {
+        foreach (Permission::permissionTabs($server->egg['id']) as $tab) {
             $options = [];
             $descriptions = [];
             foreach ($tab['checkboxList']['options'] as $option) {
