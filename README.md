@@ -35,7 +35,6 @@ This example is designed to demonstrate basic loading functionality and serves a
 
 ## Installation
 
-**⚠️ Backup Notice:**  
 Before applying this patch, make a backup of your Pelican installation. If you don't have pelican installed yet you can get it from [here](https://pelican.dev/docs/panel/getting-started).
 
 ### Making a backup:
