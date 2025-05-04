@@ -5,6 +5,15 @@ This repository provides a modified version of specific files from the Pelican P
 ⚠️ **Early Development Stage**  
 This project is in an early phase. Features are limited and subject to change. New functionality will be added over time.
 
+## Notes
+
+-   This repository only includes modified files; the full Pelican Panel is **not** redistributed.
+    
+-   Only tested with version `1.0.0-beta19`.
+    
+-   Use at your own risk. Test in a non-production environment before deployment.
+    
+-   Contributions, issues, and pull requests are welcome.
 
 ## Compatibility
 
@@ -27,7 +36,7 @@ This example is designed to demonstrate basic loading functionality and serves a
 ## Installation
 
 **⚠️ Backup Notice:**  
-Before applying this patch, make a backup of your Pelican installation:
+Before applying this patch, make a backup of your Pelican installation. If you don't have pelican installed yet you can get it from [here](https://pelican.dev/docs/panel/getting-started).
 
 ### Making a backup:
 If you installed pelican somewhere else please backup that instead
@@ -68,15 +77,4 @@ Depending on your OS and web server:
     sudo chown -R apache:apache /var/www/pelican
     
     ```
-
-
-## Notes
-
--   This repository only includes modified files; the full Pelican Panel is **not** redistributed.
-    
--   Only tested with version `1.0.0-beta19`.
-    
--   Use at your own risk. Test in a non-production environment before deployment.
-    
--   Contributions, issues, and pull requests are welcome.
    
