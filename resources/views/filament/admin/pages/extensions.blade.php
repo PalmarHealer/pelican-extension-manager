@@ -403,7 +403,7 @@
                                 class="mb-2">
                             <x-filament::input
                                     wire:model="eggFilter"
-                                    label="Extension-Name"
+                                    label="'{{ $extension['slug'] }}'"
                                     placeholder="Search for specific eggs"
                                     wire:keydown.enter="filterEggs('{{ $extension['slug'] }}')"
                                     x-data="{
@@ -416,6 +416,7 @@
                                             }
                                         }"
                                     x-on:input="debounceSubmit()"
+                                    wire:blur="clearInput"
                             />
                         </x-filament::input.wrapper>
 
