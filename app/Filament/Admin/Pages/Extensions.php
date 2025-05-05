@@ -29,6 +29,8 @@ class Extensions extends Page
 
     public array $installed = [];
     public array $panelEggs = [];
+    public array $extensionEggFilter = [];
+    public string $activeFilter = '';
 
     public static function canAccess(): bool
     {
@@ -52,7 +54,13 @@ class Extensions extends Page
     {
         $this->installed = [];
         foreach (extensionHelper::getInstalledExtensions() as $extension) {
-            $extension['eggs'] = $this->panelEggs;
+            $this->activeFilter = $this->extensionEggFilter[$extension['slug']] ?? '';
+            $filteredEggs = collect($this->panelEggs)
+                ->filter(function ($item) {
+                    return stripos($item['name'], $this->activeFilter) !== false;
+                })
+                ->values();
+            $extension['eggs'] = $filteredEggs->toArray();
             $this->installed[] = $extension;
 
         }
@@ -92,21 +100,8 @@ class Extensions extends Page
 
     public function filterEggs($extensionSlug): void
     {
-        $this->installed = [];
-
-        foreach (extensionHelper::getInstalledExtensions() as $extension) {
-            $filteredEggs = $this->panelEggs;
-            if ($extensionSlug == $extension['slug']) {
-                $filteredEggs = collect($this->panelEggs)
-                    ->filter(function ($item) {
-                        return stripos($item['name'], $this->eggFilter) !== false;
-                    })
-                    ->values();
-            }
-            $extension['eggs'] = $filteredEggs->toArray();
-            $this->installed[] = $extension;
-
-        }
+        $this->extensionEggFilter[$extensionSlug] = $this->eggFilter;
+        $this->reload();
     }
 
     public function enableExtension($extension): void
