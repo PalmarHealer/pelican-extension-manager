@@ -66,7 +66,7 @@ cp -r /var/www/pelican /var/www/pelican-backup
 cd /var/www/pelican
 ```
 ```bash
-curl -L https://github.com/PalmarHealer/pelican-extension-manager/releases/latest/download/panel.tar.gz | sudo tar -xzv
+sudo curl -L https://github.com/PalmarHealer/pelican-extension-manager/releases/latest/download/panel.tar.gz | sudo tar -xzv
 ```
 
 
