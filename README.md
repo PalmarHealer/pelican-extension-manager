@@ -4,7 +4,7 @@
 This repository provides a modified version of specific files from the Pelican Panel (version 1.0.0-beta19) to add an Extension Manager feature.
 
 ⚠️ **Early Development Stage**  
-This project is in an early phase. Features are limited and subject to change. New functionality will be added over time.
+This project is in an early stage and more a proof of concept than actual "software". Features are limited and subject to change.  New functionality will be added over time.
 
 ## Notes
 
