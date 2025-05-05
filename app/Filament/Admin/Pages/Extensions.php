@@ -104,6 +104,11 @@ class Extensions extends Page
         $this->reload();
     }
 
+    public function clearInput(): void
+    {
+        $this->eggFilter = "";
+    }
+
     public function enableExtension($extension): void
     {
         foreach ($this->installed as $installedExtension) {
