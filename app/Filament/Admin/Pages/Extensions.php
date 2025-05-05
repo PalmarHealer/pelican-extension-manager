@@ -122,7 +122,7 @@ class Extensions extends Page
                         app_path('Filament/Server/Extensions'), true);
 
                 }
-                elseif ($file['type'] == "Views") {
+                elseif ($file['type'] == "View") {
                     $this->extractFileFromZip(
                         base_path("extensions/extensionArchives") . "/" . $installedExtension['filename'] . ".zip",
                         $file['name'],
