@@ -53,7 +53,7 @@ This example is designed to demonstrate basic loading functionality and serves a
 
 ## Installation
 
-Before applying this patch, make a backup of your Pelican installation. If you don't have pelican installed yet you can get it from [here](https://pelican.dev/docs/panel/getting-started).
+Before applying this patch, make a backup of your Pelican installation. If you don't have pelican installed yet you can get it from [here](https://pelican.dev/docs/panel/getting-started). Please beware that each time pelican publishes a new version, you need to apply this patch again. Sometimes you need to disable and enable all of your extensions after the update. But this can be done in the admin panel.
 
 ### Making a backup:
 If you installed pelican somewhere else please backup that instead
