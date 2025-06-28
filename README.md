@@ -20,9 +20,9 @@ This project is in an early stage and more a proof of concept than actual "softw
 
 | Pelican Version         | Status        | Notes                         |
 |-------------------------|---------------|-------------------------------|
-| 1.0.0-beta19            | ✅ Supported  | Base version for this patch   |
-| 1.0.0-beta18 and below  | ❌ Unsupported | Not tested / likely incompatible |
-| Future versions         | ❓ Unknown    | Will require adjustments      |
+| 1.0.0-beta19            | ✅  | Base version for this patch   |
+| 1.0.0-beta18 and below  | ❌  | Not tested / likely incompatible |
+| Future versions         | ❓  | Will require adjustments      |
 
 
 ## Features
